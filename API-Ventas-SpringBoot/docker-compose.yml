@@ -1,0 +1,50 @@
+services:
+  mysql-ventas:
+    image: mysql:8.0
+    container_name: mysql-ventas
+    environment:
+      MYSQL_DATABASE: ventas_db
+      MYSQL_USER: ventas_user
+      MYSQL_PASSWORD: ventas_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_ventas_data:/var/lib/mysql
+    networks:
+      - ventas-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "ventas_user", "-pventas_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  ventas-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: innovatech-ventas-backend:local
+    container_name: ventas-backend
+    depends_on:
+      mysql-ventas:
+        condition: service_healthy
+    environment:
+      DB_ENDPOINT: mysql-ventas
+      DB_PORT: 3306
+      DB_NAME: ventas_db
+      DB_USERNAME: ventas_user
+      DB_PASSWORD: ventas_pass
+    ports:
+      - "8082:8080"
+    networks:
+      - ventas-network
+    restart: always
+
+volumes:
+  mysql_ventas_data:
+
+networks:
+  ventas-network:
+    driver: bridge
