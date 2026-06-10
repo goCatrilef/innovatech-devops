@@ -1,17 +1,17 @@
-name: Deploy Ventas Backend to ECR
+name: Deploy Despachos Backend to ECR
 
 on:
   push:
     branches:
       - develop
     paths:
-      - "API-Ventas-SpringBoot/**"
-      - ".github/workflows/deploy-ventas-backend.yml"
+      - "API-Despachos-SpringBoot/**"
+      - ".github/workflows/deploy-despachos-backend.yml"
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  ECR_REPOSITORY: innovatech-ventas-backend
+  ECR_REPOSITORY: innovatech-despachos-backend
   IMAGE_TAG: latest
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG ./API-Ventas-SpringBoot
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG ./API-Despachos-SpringBoot
 
       - name: Tag Docker image
         run: |
