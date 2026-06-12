@@ -1,4 +1,4 @@
-# Innovatech DevOps - Despligue en AWS
+# Innovatech - Despligue en AWS
 
 Proyecto desarrollado para la **Evaluación Parcial N°2** de la asignatura **Introducción a Herramientas DevOps**.
 
