@@ -1,0 +1,44 @@
+services:
+  mysql-despachos:
+    image: mysql:8.0
+    container_name: mysql-despachos
+    environment:
+      MYSQL_DATABASE: despachos_db
+      MYSQL_USER: despachos_user
+      MYSQL_PASSWORD: despachos_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_despachos_data:/var/lib/mysql
+    networks:
+      - despachos-network
+    restart: always
+
+  despachos-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: innovatech-despachos-backend:local
+    container_name: despachos-backend
+    depends_on:
+      - mysql-despachos
+    environment:
+      DB_ENDPOINT: mysql-despachos
+      DB_PORT: 3306
+      DB_NAME: despachos_db
+      DB_USERNAME: despachos_user
+      DB_PASSWORD: despachos_pass
+    ports:
+      - "8081:8081"
+    networks:
+      - despachos-network
+    restart: always
+
+volumes:
+  mysql_despachos_data:
+
+networks:
+  despachos-network:
+    driver: bridge
+    

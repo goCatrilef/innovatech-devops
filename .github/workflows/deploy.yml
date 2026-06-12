@@ -3,7 +3,12 @@ name: Deploy Frontend to EC2
 on:
   push:
     branches:
-      - deploy
+      - develop
+    paths:
+      - "frontend_despacho/**"
+      - ".github/workflows/deploy-frontend.yml"
+
+  workflow_dispatch:
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -29,10 +34,10 @@ jobs:
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
-
+#Frontend 
       - name: Build Docker image
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG ./front_despacho
 
       - name: Tag Docker image
         run: |
@@ -50,7 +55,7 @@ jobs:
 
       - name: Deploy on EC2 Frontend
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_FRONT_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_FRONT_HOST }} << 'EOF'
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 699480004844.dkr.ecr.us-east-1.amazonaws.com
 
             docker pull 699480004844.dkr.ecr.us-east-1.amazonaws.com/innovatech-frontend:latest
